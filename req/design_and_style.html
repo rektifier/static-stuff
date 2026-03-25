@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Req Coach - Requirements Home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600&display=swap" rel="stylesheet">
+<style>
+/* ─── Reset ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body { font-family: 'IBM Plex Sans', sans-serif; color: var(--text-primary); background: var(--bg); overflow: hidden; height: 100vh; }
+a { text-decoration: none; color: inherit; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; font-size: inherit; }
+textarea { font-family: inherit; font-size: inherit; resize: vertical; }
+ul, ol { list-style: none; }
+
+/* ─── Variables ─── */
+:root {
+  --bg: #F7F6F3;
+  --surface: #FFFFFF;
+  --surface-raised: #FAFBFD;
+  --border: #E8E6E1;
+  --border-light: #F0EEEA;
+  --text-primary: #1A1A1A;
+  --text-secondary: #6B6B6B;
+  --text-tertiary: #9B9B9B;
+  --accent: #3D5A80;
+  --accent-hover: #2E4A6E;
+  --accent-light: #EDF1F7;
+  --accent-subtle: #F5F7FA;
+  --success: #3A7D44;
+  --success-light: #EFF7F0;
+  --warning: #C4841D;
+  --warning-light: #FFF7ED;
+  --danger: #B83A3A;
+  --danger-light: #FDF2F2;
+  --draft-color: #8B7355;
+  --draft-bg: #F5F0E8;
+  --refined-color: #4A6FA5;
+  --refined-bg: #EDF2F8;
+  --merged-color: #6B5B8A;
+  --merged-bg: #F0EDF5;
+  --approved-color: #3A7D44;
+  --approved-bg: #EFF7F0;
+  --clarification-color: #C4841D;
+  --clarification-bg: #FFF7ED;
+  --blocked-color: #B83A3A;
+  --blocked-bg: #FDF2F2;
+  --export-color: #2B7A78;
+  --export-bg: #EDF7F7;
+  --agent-req: #3D5A80;
+  --agent-process: #2B7A78;
+  --agent-scope: #6B5B8A;
+  --agent-integration: #C4841D;
+  --agent-nfr: #3A7D44;
+  --agent-test: #4A6FA5;
+  --agent-decision: #8B5E3C;
+  --nav-h: 56px;
+  --sidebar-w: 232px;
+  --chat-w: 360px;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+/* ─── Headings ─── */
+h1, h2, h3, h4, h5 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; color: var(--text-primary); }
+
+/* ─── Layout ─── */
+.topnav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: var(--nav-h); background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px;
+}
+.sidebar {
+  position: fixed; top: var(--nav-h); left: 0; bottom: 0;
+  width: var(--sidebar-w); background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; justify-content: space-between;
+  padding: 16px 12px;
+  z-index: 90;
+}
+.main-content {
+  position: fixed; top: var(--nav-h); left: var(--sidebar-w); right: var(--chat-w); bottom: 0;
+  overflow-y: auto; overflow-x: hidden;
+  padding: 32px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.main-content::-webkit-scrollbar { width: 6px; }
+.main-content::-webkit-scrollbar-track { background: transparent; }
+.main-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+.chat-panel {
+  position: fixed; top: var(--nav-h); right: 0; bottom: 0;
+  width: var(--chat-w); background: var(--surface);
+  border-left: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  z-index: 90;
+}
+
+/* ─── Top Navigation ─── */
+.topnav-left { display: flex; align-items: center; gap: 20px; }
+.logo {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 700; font-size: 18px; color: var(--accent);
+  letter-spacing: -0.3px;
+  display: flex; align-items: center; gap: 8px;
+}
+.logo-mark {
+  width: 28px; height: 28px; background: var(--accent); border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 14px; font-weight: 700;
+}
+.workspace-switcher {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 500; color: var(--text-secondary);
+  border: 1px solid var(--border); cursor: pointer;
+  transition: border-color 200ms, background 200ms;
+}
+.workspace-switcher:hover { border-color: var(--accent); background: var(--accent-subtle); }
+.workspace-switcher svg { width: 14px; height: 14px; opacity: 0.5; }
+.topnav-center { flex: 1; display: flex; justify-content: center; padding: 0 40px; }
+.search-bar {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; max-width: 420px;
+  padding: 7px 14px; border-radius: 8px;
+  background: var(--bg); border: 1px solid var(--border);
+  color: var(--text-tertiary); font-size: 13px;
+  cursor: pointer; transition: border-color 200ms, box-shadow 200ms;
+}
+.search-bar:hover { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-light); }
+.search-bar svg { width: 15px; height: 15px; flex-shrink: 0; }
+.search-bar kbd {
+  margin-left: auto; padding: 1px 6px; border-radius: 4px;
+  background: var(--surface); border: 1px solid var(--border);
+  font-family: inherit; font-size: 11px; color: var(--text-tertiary);
+}
+.topnav-right { display: flex; align-items: center; gap: 8px; }
+.nav-icon-btn {
+  position: relative; width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px; color: var(--text-secondary);
+  transition: background 200ms, color 200ms;
+}
+.nav-icon-btn:hover { background: var(--bg); color: var(--text-primary); }
+.nav-icon-btn svg { width: 18px; height: 18px; }
+.notif-badge {
+  position: absolute; top: 4px; right: 4px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--danger); color: white;
+  font-size: 10px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid var(--surface);
+}
+.avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--accent-light); color: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  transition: box-shadow 200ms;
+}
+.avatar:hover { box-shadow: 0 0 0 2px var(--accent); }
+
+/* ─── Sidebar ─── */
+.sidebar-nav { display: flex; flex-direction: column; gap: 2px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: 8px;
+  font-size: 13.5px; font-weight: 400; color: var(--text-secondary);
+  cursor: pointer; transition: all 150ms; border-left: 2px solid transparent;
+}
+.nav-item svg { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.65; }
+.nav-item:hover { background: var(--bg); color: var(--text-primary); }
+.nav-item:hover svg { opacity: 0.85; }
+.nav-item.active {
+  background: var(--accent-light); color: var(--accent);
+  font-weight: 500; border-left-color: var(--accent);
+}
+.nav-item.active svg { opacity: 1; color: var(--accent); }
+.sidebar-section-label {
+  font-size: 10.5px; font-weight: 600; color: var(--text-tertiary);
+  text-transform: uppercase; letter-spacing: 0.8px;
+  padding: 20px 12px 6px;
+}
+
+/* ─── Breadcrumb ─── */
+.breadcrumb {
+  font-size: 12.5px; color: var(--text-tertiary); margin-bottom: 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+.breadcrumb-sep { opacity: 0.4; }
+
+/* ─── Hero Section ─── */
+.hero {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 24px;
+}
+.hero-text h1 {
+  font-size: 26px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px;
+}
+.hero-text p { font-size: 14px; color: var(--text-secondary); max-width: 520px; line-height: 1.5; }
+.hero-actions { display: flex; gap: 10px; align-items: center; flex-shrink: 0; margin-top: 4px; }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 18px; border-radius: var(--radius-sm);
+  background: var(--accent); color: white; font-weight: 500; font-size: 13px;
+  transition: background 200ms, box-shadow 200ms;
+}
+.btn-primary:hover { background: var(--accent-hover); box-shadow: var(--shadow-md); }
+.btn-primary svg { width: 15px; height: 15px; }
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 18px; border-radius: var(--radius-sm);
+  background: var(--surface); color: var(--accent);
+  border: 1px solid var(--accent); font-weight: 500; font-size: 13px;
+  transition: all 200ms;
+}
+.btn-secondary:hover { background: var(--accent-light); }
+.btn-secondary svg { width: 15px; height: 15px; }
+.btn-tertiary {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 14px; border-radius: var(--radius-sm);
+  color: var(--text-secondary); font-weight: 500; font-size: 13px;
+  transition: all 200ms;
+}
+.btn-tertiary:hover { color: var(--accent); background: var(--accent-subtle); }
+.btn-tertiary svg { width: 15px; height: 15px; }
+
+/* ─── AI Input Card ─── */
+.input-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+  margin-bottom: 24px; box-shadow: var(--shadow);
+  border-top: 3px solid var(--accent);
+  animation: fadeInUp 0.45s ease-out both;
+}
+.input-card-header {
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 14px; font-weight: 600; color: var(--accent);
+  margin-bottom: 12px;
+}
+.input-card-header svg { width: 18px; height: 18px; }
+.input-card textarea {
+  width: 100%; min-height: 88px; padding: 12px 14px;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: var(--bg); color: var(--text-primary);
+  font-size: 13px; line-height: 1.6;
+  transition: border-color 200ms, box-shadow 200ms;
+}
+.input-card textarea::placeholder { color: var(--text-tertiary); }
+.input-card textarea:focus {
+  outline: none; border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-light);
+  background: var(--surface);
+}
+.input-card-actions {
+  display: flex; gap: 8px; margin-top: 12px;
+}
+.input-card-actions button {
+  padding: 7px 16px; border-radius: var(--radius-sm);
+  font-size: 12.5px; font-weight: 500;
+  border: 1px solid var(--border); color: var(--text-secondary);
+  background: var(--surface); transition: all 200ms;
+}
+.input-card-actions button:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-subtle); }
+.input-card-actions button:first-child { background: var(--accent); color: white; border-color: var(--accent); }
+.input-card-actions button:first-child:hover { background: var(--accent-hover); }
+
+/* ─── Dashboard Grid ─── */
+.dashboard-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 16px; margin-bottom: 28px;
+}
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+  box-shadow: var(--shadow-sm); transition: box-shadow 250ms;
+  animation: fadeInUp 0.45s ease-out both;
+}
+.card:hover { box-shadow: var(--shadow-md); }
+.card:nth-child(1) { animation-delay: 0.05s; }
+.card:nth-child(2) { animation-delay: 0.1s; }
+.card:nth-child(3) { animation-delay: 0.15s; }
+.card:nth-child(4) { animation-delay: 0.2s; }
+.card:nth-child(5) { animation-delay: 0.25s; }
+.card:nth-child(6) { animation-delay: 0.3s; }
+.card-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 16px;
+}
+.card-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 13.5px; font-weight: 600; color: var(--text-primary);
+}
+.card-total {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 22px; font-weight: 700; color: var(--text-primary);
+}
+
+/* ─── Status Bars ─── */
+.status-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 5px 0;
+}
+.status-dot {
+  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+}
+.status-label { font-size: 12.5px; color: var(--text-secondary); min-width: 110px; }
+.status-bar-track {
+  flex: 1; height: 6px; background: var(--bg);
+  border-radius: 3px; overflow: hidden;
+}
+.status-bar-fill { height: 100%; border-radius: 3px; transition: width 600ms ease-out; }
+.status-count {
+  font-size: 12.5px; font-weight: 600; color: var(--text-primary);
+  min-width: 20px; text-align: right;
+}
+
+/* ─── Metric Items ─── */
+.metric-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 0; border-bottom: 1px solid var(--border-light);
+}
+.metric-item:last-child { border-bottom: none; }
+.metric-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.metric-icon svg { width: 16px; height: 16px; }
+.metric-text { flex: 1; }
+.metric-value { font-size: 18px; font-weight: 700; font-family: 'Bricolage Grotesque', sans-serif; line-height: 1.2; }
+.metric-label { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
+.metric-sub { font-size: 11.5px; color: var(--text-tertiary); margin-top: 4px; }
+
+/* ─── Health Bar ─── */
+.health-bar-container { margin-bottom: 14px; }
+.health-bar-label {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 6px;
+}
+.health-bar-label span:first-child { font-size: 12.5px; color: var(--text-secondary); }
+.health-bar-label span:last-child { font-size: 15px; font-weight: 700; font-family: 'Bricolage Grotesque', sans-serif; }
+.health-bar-track {
+  height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden;
+}
+.health-bar-fill {
+  height: 100%; border-radius: 4px; background: var(--accent);
+  transition: width 800ms ease-out;
+}
+.health-issues { display: flex; flex-direction: column; gap: 6px; }
+.health-issue {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12.5px; color: var(--text-secondary);
+}
+.health-issue-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+/* ─── Activity Feed ─── */
+.activity-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 0; border-bottom: 1px solid var(--border-light);
+  position: relative;
+}
+.activity-item:last-child { border-bottom: none; }
+.activity-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  margin-top: 5px; flex-shrink: 0;
+}
+.activity-text { flex: 1; }
+.activity-desc { font-size: 12.5px; color: var(--text-primary); line-height: 1.4; }
+.activity-desc strong { font-weight: 600; }
+.activity-time { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
+
+/* ─── Hierarchy Section ─── */
+.section-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 17px; font-weight: 600; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.hierarchy-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 24px;
+  box-shadow: var(--shadow-sm); margin-bottom: 28px;
+  animation: fadeInUp 0.45s ease-out 0.35s both;
+}
+.tree-node { position: relative; }
+.tree-node-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 8px; border-radius: var(--radius-sm);
+  cursor: pointer; transition: background 150ms;
+}
+.tree-node-header:hover { background: var(--bg); }
+.tree-node-icon { width: 18px; height: 18px; color: var(--text-tertiary); flex-shrink: 0; }
+.tree-node-label {
+  font-size: 13.5px; font-weight: 500; color: var(--text-primary);
+}
+.tree-node-type {
+  font-size: 10.5px; font-weight: 500; color: var(--text-tertiary);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  padding: 2px 6px; background: var(--bg); border-radius: 4px;
+}
+.tree-children {
+  margin-left: 28px; padding-left: 16px;
+  border-left: 1px solid var(--border-light);
+}
+.tree-req {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 8px; border-radius: var(--radius-sm);
+  transition: background 150ms;
+}
+.tree-req:hover { background: var(--bg); }
+.tree-req-id {
+  font-size: 12px; font-weight: 600; color: var(--accent);
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+.tree-req-title { font-size: 13px; color: var(--text-primary); flex: 1; }
+.tree-badges { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+
+/* ─── Pills ─── */
+.pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 9px; border-radius: 100px;
+  font-size: 11px; font-weight: 500; white-space: nowrap;
+}
+.pill-dot { width: 5px; height: 5px; border-radius: 50%; }
+.pill-draft { background: var(--draft-bg); color: var(--draft-color); }
+.pill-draft .pill-dot { background: var(--draft-color); }
+.pill-refined { background: var(--refined-bg); color: var(--refined-color); }
+.pill-refined .pill-dot { background: var(--refined-color); }
+.pill-merged { background: var(--merged-bg); color: var(--merged-color); }
+.pill-merged .pill-dot { background: var(--merged-color); }
+.pill-approved { background: var(--approved-bg); color: var(--approved-color); }
+.pill-approved .pill-dot { background: var(--approved-color); }
+.pill-clarification { background: var(--clarification-bg); color: var(--clarification-color); }
+.pill-clarification .pill-dot { background: var(--clarification-color); }
+.pill-blocked { background: var(--blocked-bg); color: var(--blocked-color); }
+.pill-blocked .pill-dot { background: var(--blocked-color); }
+.pill-export { background: var(--export-bg); color: var(--export-color); }
+.pill-export .pill-dot { background: var(--export-color); }
+.pill-agent {
+  background: var(--accent-light); color: var(--accent);
+  font-size: 10.5px; padding: 2px 7px;
+}
+
+.badge-owner {
+  font-size: 10.5px; color: var(--text-tertiary); font-weight: 500;
+  display: flex; align-items: center; gap: 3px;
+}
+
+/* ─── Workspace Preview ─── */
+.workspace-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+  box-shadow: var(--shadow-sm); margin-bottom: 28px;
+  animation: fadeInUp 0.45s ease-out 0.4s both;
+}
+.workspace-tabs {
+  display: flex; border-bottom: 1px solid var(--border);
+  overflow-x: auto; scrollbar-width: none;
+  background: var(--bg);
+}
+.workspace-tabs::-webkit-scrollbar { display: none; }
+.workspace-tab {
+  padding: 11px 16px; font-size: 12.5px; font-weight: 500;
+  color: var(--text-tertiary); white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all 200ms; cursor: pointer;
+}
+.workspace-tab:hover { color: var(--text-secondary); }
+.workspace-tab.active { color: var(--accent); border-bottom-color: var(--accent); background: var(--surface); }
+.workspace-body { padding: 24px; }
+.workspace-req-header {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+}
+.workspace-req-id {
+  font-size: 12px; font-weight: 600; color: var(--accent);
+  padding: 3px 8px; background: var(--accent-light); border-radius: 4px;
+}
+.workspace-req-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 16px; font-weight: 600;
+}
+.workspace-meta {
+  display: flex; gap: 16px; margin-bottom: 16px;
+  padding-bottom: 16px; border-bottom: 1px solid var(--border-light);
+}
+.workspace-meta-item {
+  font-size: 12px; color: var(--text-tertiary);
+  display: flex; align-items: center; gap: 4px;
+}
+.workspace-meta-item strong { color: var(--text-secondary); font-weight: 500; }
+.workspace-req-body { font-size: 13.5px; line-height: 1.7; color: var(--text-secondary); max-width: 640px; }
+
+/* ─── How It Works ─── */
+.how-it-works {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 28px;
+  box-shadow: var(--shadow-sm); margin-bottom: 28px;
+  animation: fadeInUp 0.45s ease-out 0.45s both;
+}
+.how-it-works .section-title { margin-bottom: 24px; }
+.pipeline {
+  display: flex; align-items: flex-start; gap: 0;
+  overflow-x: auto; padding-bottom: 8px;
+  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+}
+.pipeline-step {
+  display: flex; flex-direction: column; align-items: center;
+  min-width: 80px; flex: 1; text-align: center; position: relative;
+}
+.pipeline-node {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600;
+  margin-bottom: 8px; position: relative; z-index: 1;
+}
+.pipeline-node svg { width: 18px; height: 18px; }
+.pipeline-label { font-size: 11px; color: var(--text-secondary); font-weight: 500; max-width: 85px; line-height: 1.3; }
+.pipeline-version {
+  font-size: 10px; font-weight: 600; margin-top: 4px;
+  padding: 1px 6px; border-radius: 4px;
+}
+.pipeline-arrow {
+  display: flex; align-items: center; margin-top: 8px;
+  color: var(--border); min-width: 16px; justify-content: center;
+}
+.pipeline-arrow svg { width: 16px; height: 16px; }
+
+.pipeline-input .pipeline-node { background: var(--bg); border: 1.5px solid var(--border); color: var(--text-secondary); }
+.pipeline-ai .pipeline-node { background: var(--accent-light); border: 1.5px solid var(--accent); color: var(--accent); }
+.pipeline-human .pipeline-node { background: var(--success-light); border: 1.5px solid var(--success); color: var(--success); }
+.pipeline-export .pipeline-node { background: var(--export-bg); border: 1.5px solid var(--export-color); color: var(--export-color); }
+.pipeline-version.v01 { background: var(--draft-bg); color: var(--draft-color); }
+.pipeline-version.v02 { background: var(--refined-bg); color: var(--refined-color); }
+.pipeline-version.v03 { background: var(--merged-bg); color: var(--merged-color); }
+.pipeline-version.v10 { background: var(--approved-bg); color: var(--approved-color); }
+
+/* ─── Chat Panel ─── */
+.chat-header {
+  padding: 20px 20px 16px; border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.chat-header h2 {
+  font-size: 16px; font-weight: 700; margin-bottom: 4px;
+  display: flex; align-items: center; gap: 8px;
+}
+.chat-header h2 svg { width: 18px; height: 18px; color: var(--accent); }
+.chat-header p { font-size: 12.5px; color: var(--text-tertiary); line-height: 1.4; }
+
+.agent-chips {
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+  flex-shrink: 0; background: var(--bg);
+}
+.agent-chip {
+  display: flex; flex-direction: column; gap: 1px;
+  padding: 7px 10px; border-radius: var(--radius-sm);
+  background: var(--surface); border: 1px solid var(--border);
+  cursor: pointer; transition: all 200ms;
+  border-left: 3px solid transparent;
+}
+.agent-chip:hover { border-color: var(--border); box-shadow: var(--shadow-sm); }
+.agent-chip-name { font-size: 11.5px; font-weight: 600; color: var(--text-primary); }
+.agent-chip-fn { font-size: 10px; color: var(--text-tertiary); }
+.agent-chip[data-agent="req"] { border-left-color: var(--agent-req); }
+.agent-chip[data-agent="process"] { border-left-color: var(--agent-process); }
+.agent-chip[data-agent="scope"] { border-left-color: var(--agent-scope); }
+.agent-chip[data-agent="integration"] { border-left-color: var(--agent-integration); }
+.agent-chip[data-agent="nfr"] { border-left-color: var(--agent-nfr); }
+.agent-chip[data-agent="test"] { border-left-color: var(--agent-test); }
+.agent-chip[data-agent="decision"] { border-left-color: var(--agent-decision); }
+
+.chat-messages {
+  flex: 1; overflow-y: auto; padding: 16px;
+  display: flex; flex-direction: column; gap: 12px;
+  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+}
+.chat-messages::-webkit-scrollbar { width: 4px; }
+.chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.chat-msg { max-width: 100%; }
+.chat-msg-user {
+  background: var(--accent-light); color: var(--accent-hover);
+  padding: 10px 14px; border-radius: 10px 10px 2px 10px;
+  font-size: 12.5px; line-height: 1.5; margin-left: 24px;
+}
+.chat-msg-system {
+  background: var(--bg); padding: 14px;
+  border-radius: 2px 10px 10px 10px;
+  font-size: 12.5px; line-height: 1.5;
+}
+.chat-msg-label {
+  font-size: 10.5px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.5px; color: var(--text-tertiary); margin-bottom: 6px;
+}
+.chat-structured { margin-top: 10px; }
+.chat-structured-title {
+  font-size: 11.5px; font-weight: 600; color: var(--text-primary);
+  margin: 10px 0 4px; display: flex; align-items: center; gap: 5px;
+}
+.chat-structured-title:first-child { margin-top: 0; }
+.chat-structured-list {
+  padding-left: 14px; list-style: none;
+}
+.chat-structured-list li {
+  font-size: 12px; color: var(--text-secondary);
+  padding: 2px 0; position: relative;
+}
+.chat-structured-list li::before {
+  content: '\2022'; position: absolute; left: -12px; color: var(--text-tertiary);
+}
+.chat-triggers {
+  margin-top: 12px; padding: 10px 12px;
+  background: var(--warning-light); border-radius: var(--radius-sm);
+  border-left: 3px solid var(--warning);
+}
+.chat-triggers-label {
+  font-size: 10.5px; font-weight: 600; color: var(--warning);
+  text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;
+}
+.chat-triggers-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.chat-trigger-tag {
+  font-size: 11px; color: var(--warning); font-weight: 500;
+  padding: 2px 8px; background: rgba(196, 132, 29, 0.1);
+  border-radius: 4px;
+}
+.chat-agents-activated {
+  margin-top: 10px; display: flex; flex-direction: column; gap: 4px;
+}
+.chat-agent-active {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11.5px; padding: 4px 0;
+}
+.chat-agent-active-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+.chat-agent-active-name { font-weight: 600; color: var(--text-primary); }
+.chat-agent-active-task { color: var(--text-tertiary); }
+
+.chat-input-area {
+  padding: 12px 16px; border-top: 1px solid var(--border);
+  flex-shrink: 0; background: var(--surface);
+}
+.chat-input-wrapper {
+  display: flex; align-items: flex-end; gap: 8px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 10px; padding: 8px 12px;
+  transition: border-color 200ms;
+}
+.chat-input-wrapper:focus-within { border-color: var(--accent); }
+.chat-input-wrapper input {
+  flex: 1; border: none; background: none; outline: none;
+  font-size: 13px; color: var(--text-primary);
+  font-family: inherit;
+}
+.chat-input-wrapper input::placeholder { color: var(--text-tertiary); }
+.chat-send-btn {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: var(--accent); color: white;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 200ms;
+}
+.chat-send-btn:hover { background: var(--accent-hover); }
+.chat-send-btn svg { width: 14px; height: 14px; }
+
+/* ─── Animations ─── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ─── Top Navigation ─── -->
+<header class="topnav">
+  <div class="topnav-left">
+    <div class="logo">
+      <div class="logo-mark">R</div>
+      Req Coach
+    </div>
+    <button class="workspace-switcher">
+      Acme Corp
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8l4 4 4-4"/></svg>
+    </button>
+  </div>
+  <div class="topnav-center">
+    <div class="search-bar">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M14 14l3.5 3.5"/></svg>
+      Search requirements, projects...
+      <kbd>/</kbd>
+    </div>
+  </div>
+  <div class="topnav-right">
+    <button class="nav-icon-btn">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3a5.5 5.5 0 015.5 5.5c0 3.03-1.1 3.8-1.6 5.5H6.1c-.5-1.7-1.6-2.47-1.6-5.5A5.5 5.5 0 0110 3z"/><path d="M8 16.5a2 2 0 004 0"/></svg>
+      <span class="notif-badge">3</span>
+    </button>
+    <div class="avatar" title="Anna Lindstrom">AL</div>
+  </div>
+</header>
+
+<!-- ─── Sidebar ─── -->
+<aside class="sidebar">
+  <nav class="sidebar-nav">
+    <div class="sidebar-section-label">Main</div>
+    <a class="nav-item active">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5L10 3l7 5.5V17a1 1 0 01-1 1H4a1 1 0 01-1-1V8.5z"/><path d="M7.5 17V11h5v6"/></svg>
+      Home
+    </a>
+    <a class="nav-item">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6a1 1 0 011-1h4l2 2h6a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V6z"/></svg>
+      Projects
+    </a>
+    <a class="nav-item">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="12" height="15" rx="1.5"/><path d="M8 8h4M8 11h4M8 14h2"/></svg>
+      Review Board
+    </a>
+    <a class="nav-item">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3v3M6 6l6 4M14 6l-6 4M4 14h4l2-4 2 4h4"/></svg>
+      Decisions
+    </a>
+
+    <div class="sidebar-section-label">Tools</div>
+    <a class="nav-item">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h12v3l-3 3 3 3v3H4v-3l3-3-3-3V4z"/></svg>
+      Export Center
+    </a>
+    <a class="nav-item">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="12" height="12" rx="2"/><circle cx="7.5" cy="8" r="1"/><circle cx="12.5" cy="8" r="1"/><path d="M7.5 13h5"/></svg>
+      Agents
+    </a>
+
+    <div class="sidebar-section-label">System</div>
+    <a class="nav-item">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="3"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.93 4.93l1.41 1.41M13.66 13.66l1.41 1.41M4.93 15.07l1.41-1.41M13.66 6.34l1.41-1.41"/></svg>
+      Settings
+    </a>
+  </nav>
+</aside>
+
+<!-- ─── Main Content ─── -->
+<main class="main-content">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    Acme Corp <span class="breadcrumb-sep">/</span> Customer Portal Redesign
+  </div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Requirements Home</h1>
+      <p>Turn messy business input into clear, reviewable, testable requirements - structured by AI agents and refined through specialist review.</p>
+    </div>
+    <div class="hero-actions">
+      <button class="btn-primary">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 4v12M4 10h12"/></svg>
+        New Requirement
+      </button>
+      <button class="btn-secondary">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2l2 4-2 2-2-2 2-4zM4 10l2-2 2 2-2 2-2-2zM14 10l2-2 2 2-2 2-2-2zM10 14l2-2 2 2-2 2-2-2z"/></svg>
+        Start with AI
+      </button>
+      <button class="btn-tertiary">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13l4-4 4 4 4-4"/><path d="M4 17h12"/></svg>
+        Import Notes
+      </button>
+    </div>
+  </section>
+
+  <!-- AI Input Card -->
+  <section class="input-card">
+    <div class="input-card-header">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2l2 4-2 2-2-2 2-4zM4 10l2-2 2 2-2 2-2-2zM14 10l2-2 2 2-2 2-2-2zM10 14l2-2 2 2-2 2-2-2z"/></svg>
+      AI-Assisted Drafting
+    </div>
+    <textarea placeholder="Paste messy notes, stakeholder input, process changes, risks, or business goals. The coordinator will structure them into requirements and trigger specialist agents when needed."></textarea>
+    <div class="input-card-actions">
+      <button>Analyze</button>
+      <button>Create Draft</button>
+      <button>Meeting Prep</button>
+    </div>
+  </section>
+
+  <!-- Dashboard Grid -->
+  <section class="dashboard-grid">
+
+    <!-- 1. Requirements by Status -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Requirements by Status</span>
+        <span class="card-total">37</span>
+      </div>
+      <div class="status-row">
+        <span class="status-dot" style="background:var(--draft-color)"></span>
+        <span class="status-label">Draft v0.1</span>
+        <div class="status-bar-track"><div class="status-bar-fill" style="width:10.8%;background:var(--draft-color)"></div></div>
+        <span class="status-count">4</span>
+      </div>
+      <div class="status-row">
+        <span class="status-dot" style="background:var(--refined-color)"></span>
+        <span class="status-label">Refined v0.2</span>
+        <div class="status-bar-track"><div class="status-bar-fill" style="width:18.9%;background:var(--refined-color)"></div></div>
+        <span class="status-count">7</span>
+      </div>
+      <div class="status-row">
+        <span class="status-dot" style="background:var(--merged-color)"></span>
+        <span class="status-label">Merged v0.3</span>
+        <div class="status-bar-track"><div class="status-bar-fill" style="width:8.1%;background:var(--merged-color)"></div></div>
+        <span class="status-count">3</span>
+      </div>
+      <div class="status-row">
+        <span class="status-dot" style="background:var(--approved-color)"></span>
+        <span class="status-label">Approved v1.0</span>
+        <div class="status-bar-track"><div class="status-bar-fill" style="width:32.4%;background:var(--approved-color)"></div></div>
+        <span class="status-count">12</span>
+      </div>
+      <div class="status-row">
+        <span class="status-dot" style="background:var(--clarification-color)"></span>
+        <span class="status-label">Needs clarification</span>
+        <div class="status-bar-track"><div class="status-bar-fill" style="width:5.4%;background:var(--clarification-color)"></div></div>
+        <span class="status-count">2</span>
+      </div>
+      <div class="status-row">
+        <span class="status-dot" style="background:var(--blocked-color)"></span>
+        <span class="status-label">Blocked</span>
+        <div class="status-bar-track"><div class="status-bar-fill" style="width:2.7%;background:var(--blocked-color)"></div></div>
+        <span class="status-count">1</span>
+      </div>
+      <div class="status-row">
+        <span class="status-dot" style="background:var(--export-color)"></span>
+        <span class="status-label">Ready for export</span>
+        <div class="status-bar-track"><div class="status-bar-fill" style="width:21.6%;background:var(--export-color)"></div></div>
+        <span class="status-count">8</span>
+      </div>
+    </div>
+
+    <!-- 2. Open Questions & Blockers -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Open Questions & Blockers</span>
+      </div>
+      <div class="metric-item">
+        <div class="metric-icon" style="background:var(--warning-light);color:var(--warning)">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10" cy="10" r="7"/><path d="M10 7v3M10 13h.01"/></svg>
+        </div>
+        <div class="metric-text">
+          <div class="metric-value" style="color:var(--warning)">6</div>
+          <div class="metric-label">Unresolved questions</div>
+          <div class="metric-sub">3 awaiting stakeholder response</div>
+        </div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-icon" style="background:var(--danger-light);color:var(--danger)">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4l12 12M16 4L4 16"/></svg>
+        </div>
+        <div class="metric-text">
+          <div class="metric-value" style="color:var(--danger)">2</div>
+          <div class="metric-label">Blocking decisions</div>
+          <div class="metric-sub">OAuth vs SAML, notification channels</div>
+        </div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-icon" style="background:var(--accent-light);color:var(--accent)">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="4" width="12" height="12" rx="2"/><circle cx="7.5" cy="8" r="1" fill="currentColor"/><circle cx="12.5" cy="8" r="1" fill="currentColor"/><path d="M7.5 13h5"/></svg>
+        </div>
+        <div class="metric-text">
+          <div class="metric-value" style="color:var(--accent)">1</div>
+          <div class="metric-label">Missing specialist review</div>
+          <div class="metric-sub">NFR Analyst pending on REQ-104</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Export Readiness -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Export Readiness</span>
+      </div>
+      <div class="metric-item">
+        <div class="metric-icon" style="background:var(--success-light);color:var(--success)">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10l3 3 5-6"/></svg>
+        </div>
+        <div class="metric-text">
+          <div class="metric-value" style="color:var(--success)">8</div>
+          <div class="metric-label">Ready for export</div>
+        </div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-icon" style="background:var(--warning-light);color:var(--warning)">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10 4v8M10 15h.01"/></svg>
+        </div>
+        <div class="metric-text">
+          <div class="metric-value" style="color:var(--warning)">3</div>
+          <div class="metric-label">Changed after export</div>
+        </div>
+      </div>
+      <div class="metric-item" style="border-bottom:none; padding-top:12px; margin-top:4px; border-top:1px solid var(--border-light)">
+        <div class="metric-text" style="padding-left:0">
+          <div class="metric-label" style="font-weight:600; color:var(--text-primary); margin-bottom:6px">Recent Packages</div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px">
+              <span class="pill pill-export"><span class="pill-dot"></span>EP-042</span>
+              <span style="color:var(--text-secondary)">Auth Module v1.0</span>
+              <span style="color:var(--text-tertiary);margin-left:auto;font-size:11px">2d ago</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px">
+              <span class="pill pill-export"><span class="pill-dot"></span>EP-041</span>
+              <span style="color:var(--text-secondary)">Order Tracking v0.3</span>
+              <span style="color:var(--text-tertiary);margin-left:auto;font-size:11px">5d ago</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Decision Queue -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Decision Queue</span>
+      </div>
+      <div class="metric-item">
+        <div class="metric-icon" style="background:var(--merged-bg);color:var(--merged-color)">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 14h12M4 6l4 4-4 4M16 6l-4 4 4 4"/></svg>
+        </div>
+        <div class="metric-text">
+          <div class="metric-value" style="color:var(--merged-color)">3</div>
+          <div class="metric-label">Visible trade-offs</div>
+        </div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-icon" style="background:var(--warning-light);color:var(--warning)">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10" cy="10" r="7"/><path d="M10 7v3M10 13h.01"/></svg>
+        </div>
+        <div class="metric-text">
+          <div class="metric-value" style="color:var(--warning)">1</div>
+          <div class="metric-label">Owner missing</div>
+        </div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-icon" style="background:var(--accent-light);color:var(--accent)">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 10h12M10 4v12"/></svg>
+        </div>
+        <div class="metric-text">
+          <div class="metric-value" style="color:var(--accent)">2</div>
+          <div class="metric-label">Pending recommendations</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding:10px 12px;background:var(--bg);border-radius:var(--radius-sm);font-size:12px">
+        <div style="font-weight:600;color:var(--text-primary);margin-bottom:4px">Latest pending</div>
+        <div style="color:var(--text-secondary);line-height:1.4">OAuth vs SAML for external partner authentication</div>
+        <div style="color:var(--text-tertiary);font-size:11px;margin-top:4px">Awaiting decision - Decision Analyst active</div>
+      </div>
+    </div>
+
+    <!-- 5. Requirement Health -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Requirement Health</span>
+      </div>
+      <div class="health-bar-container">
+        <div class="health-bar-label">
+          <span>Clarity score</span>
+          <span>78%</span>
+        </div>
+        <div class="health-bar-track">
+          <div class="health-bar-fill" style="width:78%"></div>
+        </div>
+      </div>
+      <div class="health-issues">
+        <div class="health-issue">
+          <span class="health-issue-dot" style="background:var(--warning)"></span>
+          <span><strong style="font-weight:600">3</strong> testability issues</span>
+        </div>
+        <div class="health-issue">
+          <span class="health-issue-dot" style="background:var(--danger)"></span>
+          <span><strong style="font-weight:600">2</strong> missing NFRs</span>
+        </div>
+        <div class="health-issue">
+          <span class="health-issue-dot" style="background:var(--merged-color)"></span>
+          <span><strong style="font-weight:600">1</strong> integration risk</span>
+        </div>
+      </div>
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border-light);font-size:11.5px;color:var(--text-tertiary)">
+        Health calculated across 37 requirements. <span style="color:var(--accent);font-weight:500;cursor:pointer">View details</span>
+      </div>
+    </div>
+
+    <!-- 6. Activity Feed -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Activity Feed</span>
+      </div>
+      <div class="activity-item">
+        <span class="activity-dot" style="background:var(--approved-color)"></span>
+        <div class="activity-text">
+          <div class="activity-desc"><strong>REQ-101</strong> approved by Anna Lindstrom</div>
+          <div class="activity-time">12 min ago</div>
+        </div>
+      </div>
+      <div class="activity-item">
+        <span class="activity-dot" style="background:var(--agent-process)"></span>
+        <div class="activity-text">
+          <div class="activity-desc">Process Analyst ran on <strong>REQ-104</strong></div>
+          <div class="activity-time">28 min ago</div>
+        </div>
+      </div>
+      <div class="activity-item">
+        <span class="activity-dot" style="background:var(--merged-color)"></span>
+        <div class="activity-text">
+          <div class="activity-desc"><strong>REQ-103</strong> merged to v0.3</div>
+          <div class="activity-time">1 hour ago</div>
+        </div>
+      </div>
+      <div class="activity-item">
+        <span class="activity-dot" style="background:var(--export-color)"></span>
+        <div class="activity-text">
+          <div class="activity-desc">Export package <strong>EP-042</strong> created</div>
+          <div class="activity-time">2 hours ago</div>
+        </div>
+      </div>
+      <div class="activity-item">
+        <span class="activity-dot" style="background:var(--warning)"></span>
+        <div class="activity-text">
+          <div class="activity-desc">Open question added to <strong>REQ-105</strong></div>
+          <div class="activity-time">3 hours ago</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hierarchy Section -->
+  <h2 class="section-title">
+    <svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="6" height="4" rx="1"/><rect x="12" y="8" width="6" height="4" rx="1"/><rect x="12" y="14" width="6" height="4" rx="1"/><path d="M8 4h2v12h2M10 10h2"/></svg>
+    Project Structure
+  </h2>
+  <div class="hierarchy-card">
+    <!-- Project -->
+    <div class="tree-node">
+      <div class="tree-node-header">
+        <svg class="tree-node-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 6a1 1 0 011-1h4l2 2h6a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V6z"/></svg>
+        <span class="tree-node-label">Customer Portal Redesign</span>
+        <span class="tree-node-type">Project</span>
+      </div>
+
+      <div class="tree-children">
+        <!-- Area: User Authentication -->
+        <div class="tree-node">
+          <div class="tree-node-header">
+            <svg class="tree-node-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="14" height="14" rx="2"/><path d="M3 8h14"/></svg>
+            <span class="tree-node-label">User Authentication</span>
+            <span class="tree-node-type">Area</span>
+          </div>
+
+          <div class="tree-children">
+            <!-- Capability: Single Sign-On -->
+            <div class="tree-node">
+              <div class="tree-node-header">
+                <svg class="tree-node-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="7"/><path d="M10 6v4l3 2"/></svg>
+                <span class="tree-node-label">Single Sign-On</span>
+                <span class="tree-node-type">Capability</span>
+              </div>
+
+              <div class="tree-children">
+                <div class="tree-req">
+                  <span class="tree-req-id">REQ-101</span>
+                  <span class="tree-req-title">SSO integration with Azure AD</span>
+                  <div class="tree-badges">
+                    <span class="pill pill-approved"><span class="pill-dot"></span>v1.0</span>
+                    <span class="badge-owner">AL</span>
+                    <span class="pill pill-export" style="font-size:10px"><span class="pill-dot"></span>Exported</span>
+                  </div>
+                </div>
+                <div class="tree-req">
+                  <span class="tree-req-id">REQ-102</span>
+                  <span class="tree-req-title">Multi-factor authentication support</span>
+                  <div class="tree-badges">
+                    <span class="pill pill-refined"><span class="pill-dot"></span>v0.2</span>
+                    <span class="badge-owner">EK</span>
+                    <span class="pill pill-agent">Process Analyst</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Capability: Password Recovery -->
+            <div class="tree-node">
+              <div class="tree-node-header">
+                <svg class="tree-node-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="7"/><path d="M10 6v4l3 2"/></svg>
+                <span class="tree-node-label">Password Recovery</span>
+                <span class="tree-node-type">Capability</span>
+              </div>
+
+              <div class="tree-children">
+                <div class="tree-req">
+                  <span class="tree-req-id">REQ-103</span>
+                  <span class="tree-req-title">Self-service password reset flow</span>
+                  <div class="tree-badges">
+                    <span class="pill pill-merged"><span class="pill-dot"></span>v0.3</span>
+                    <span class="badge-owner">AL</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Area: Order Management -->
+        <div class="tree-node">
+          <div class="tree-node-header">
+            <svg class="tree-node-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="14" height="14" rx="2"/><path d="M3 8h14"/></svg>
+            <span class="tree-node-label">Order Management</span>
+            <span class="tree-node-type">Area</span>
+          </div>
+
+          <div class="tree-children">
+            <!-- Capability: Order Tracking -->
+            <div class="tree-node">
+              <div class="tree-node-header">
+                <svg class="tree-node-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="7"/><path d="M10 6v4l3 2"/></svg>
+                <span class="tree-node-label">Order Tracking</span>
+                <span class="tree-node-type">Capability</span>
+              </div>
+
+              <div class="tree-children">
+                <div class="tree-req">
+                  <span class="tree-req-id">REQ-104</span>
+                  <span class="tree-req-title">Real-time order status updates</span>
+                  <div class="tree-badges">
+                    <span class="pill pill-draft"><span class="pill-dot"></span>v0.1</span>
+                    <span class="badge-owner">MJ</span>
+                  </div>
+                </div>
+                <div class="tree-req">
+                  <span class="tree-req-id">REQ-105</span>
+                  <span class="tree-req-title">Delivery notification preferences</span>
+                  <div class="tree-badges">
+                    <span class="pill pill-clarification"><span class="pill-dot"></span>Clarification</span>
+                    <span class="badge-owner">-</span>
+                  </div>
+                </div>
+                <div class="tree-req">
+                  <span class="tree-req-id">REQ-106</span>
+                  <span class="tree-req-title">Order history export functionality</span>
+                  <div class="tree-badges">
+                    <span class="pill pill-blocked"><span class="pill-dot"></span>Blocked</span>
+                    <span class="badge-owner">EK</span>
+                  </div>
+                </div>
+                <div class="tree-req">
+                  <span class="tree-req-id">REQ-107</span>
+                  <span class="tree-req-title">Shipment tracking integration</span>
+                  <div class="tree-badges">
+                    <span class="pill pill-approved"><span class="pill-dot"></span>v1.0</span>
+                    <span class="badge-owner">AL</span>
+                    <span class="pill pill-export" style="font-size:10px"><span class="pill-dot"></span>Ready</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Workspace Preview -->
+  <h2 class="section-title">
+    <svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="14" height="14" rx="2"/><path d="M3 8h14M8 8v9"/></svg>
+    Requirement Workspace
+  </h2>
+  <div class="workspace-card">
+    <div class="workspace-tabs">
+      <div class="workspace-tab">Summary</div>
+      <div class="workspace-tab active">Requirement</div>
+      <div class="workspace-tab">Acceptance Criteria</div>
+      <div class="workspace-tab">Assumptions & Questions</div>
+      <div class="workspace-tab">Risks & Dependencies</div>
+      <div class="workspace-tab">Reviews</div>
+      <div class="workspace-tab">Story Candidates</div>
+      <div class="workspace-tab">Export Mapping</div>
+      <div class="workspace-tab">Activity</div>
+    </div>
+    <div class="workspace-body">
+      <div class="workspace-req-header">
+        <span class="workspace-req-id">REQ-101</span>
+        <span class="workspace-req-title">SSO Integration with Azure AD</span>
+      </div>
+      <div class="workspace-meta">
+        <div class="workspace-meta-item">Version: <strong>v1.0</strong></div>
+        <div class="workspace-meta-item">Status: <span class="pill pill-approved" style="margin-left:2px"><span class="pill-dot"></span>Approved</span></div>
+        <div class="workspace-meta-item">Priority: <strong>High</strong></div>
+        <div class="workspace-meta-item">Owner: <strong>Anna Lindstrom</strong></div>
+        <div class="workspace-meta-item">Area: <strong>User Authentication</strong></div>
+      </div>
+      <div class="workspace-req-body">
+        The system shall support single sign-on authentication via Azure Active Directory for all internal users, allowing seamless access without additional credential input. External partner accounts shall be managed through a federated identity model, supporting both OAuth 2.0 and SAML 2.0 protocols. Session management shall comply with the organization's security policy, including automatic timeout after 30 minutes of inactivity.
+      </div>
+    </div>
+  </div>
+
+  <!-- How It Works -->
+  <div class="how-it-works">
+    <h2 class="section-title">
+      <svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M14 6l4 4-4 4"/></svg>
+      How It Works
+    </h2>
+    <div class="pipeline">
+      <div class="pipeline-step pipeline-input">
+        <div class="pipeline-node">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h12v12H4zM7 8h6M7 11h4"/></svg>
+        </div>
+        <div class="pipeline-label">Messy input</div>
+      </div>
+      <div class="pipeline-arrow">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 10h10M12 7l3 3-3 3"/></svg>
+      </div>
+      <div class="pipeline-step pipeline-ai">
+        <div class="pipeline-node">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="12" height="12" rx="2"/><circle cx="7.5" cy="8.5" r="1" fill="currentColor"/><circle cx="12.5" cy="8.5" r="1" fill="currentColor"/><path d="M7.5 13h5"/></svg>
+        </div>
+        <div class="pipeline-label">Structured draft</div>
+        <div class="pipeline-version v01">v0.1</div>
+      </div>
+      <div class="pipeline-arrow">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 10h10M12 7l3 3-3 3"/></svg>
+      </div>
+      <div class="pipeline-step pipeline-ai">
+        <div class="pipeline-node">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="6" r="3"/><circle cx="5" cy="14" r="2.5"/><circle cx="15" cy="14" r="2.5"/></svg>
+        </div>
+        <div class="pipeline-label">Specialist review</div>
+      </div>
+      <div class="pipeline-arrow">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 10h10M12 7l3 3-3 3"/></svg>
+      </div>
+      <div class="pipeline-step pipeline-ai">
+        <div class="pipeline-node">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 10h12M10 4v12"/></svg>
+        </div>
+        <div class="pipeline-label">Refined draft</div>
+        <div class="pipeline-version v02">v0.2</div>
+      </div>
+      <div class="pipeline-arrow">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 10h10M12 7l3 3-3 3"/></svg>
+      </div>
+      <div class="pipeline-step pipeline-ai">
+        <div class="pipeline-node">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 4l4 4-4 4M10 4l4 4-4 4"/></svg>
+        </div>
+        <div class="pipeline-label">Multi-agent merge</div>
+        <div class="pipeline-version v03">v0.3</div>
+      </div>
+      <div class="pipeline-arrow">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 10h10M12 7l3 3-3 3"/></svg>
+      </div>
+      <div class="pipeline-step pipeline-human">
+        <div class="pipeline-node">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="7" r="3"/><path d="M4 17c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>
+        </div>
+        <div class="pipeline-label">Human approval</div>
+        <div class="pipeline-version v10">v1.0</div>
+      </div>
+      <div class="pipeline-arrow">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 10h10M12 7l3 3-3 3"/></svg>
+      </div>
+      <div class="pipeline-step pipeline-export">
+        <div class="pipeline-node">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 13l4-4 4 4 4-4"/><path d="M4 17h12"/></svg>
+        </div>
+        <div class="pipeline-label">Azure DevOps export</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ─── AI Chat Panel ─── -->
+<aside class="chat-panel">
+  <div class="chat-header">
+    <h2>
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="12" height="12" rx="2"/><circle cx="7.5" cy="8" r="1" fill="currentColor"/><circle cx="12.5" cy="8" r="1" fill="currentColor"/><path d="M7.5 13h5"/></svg>
+      Req Coordinator
+    </h2>
+    <p>I structure requirements, detect gaps, and call specialist agents when needed.</p>
+  </div>
+
+  <!-- Agent Chips -->
+  <div class="agent-chips">
+    <div class="agent-chip" data-agent="req">
+      <span class="agent-chip-name">Requirements Analyst</span>
+      <span class="agent-chip-fn">structure & clarity</span>
+    </div>
+    <div class="agent-chip" data-agent="process">
+      <span class="agent-chip-name">Process Analyst</span>
+      <span class="agent-chip-fn">workflow</span>
+    </div>
+    <div class="agent-chip" data-agent="scope">
+      <span class="agent-chip-name">Scope Strategist</span>
+      <span class="agent-chip-fn">MVP scope</span>
+    </div>
+    <div class="agent-chip" data-agent="integration">
+      <span class="agent-chip-name">Integration Analyst</span>
+      <span class="agent-chip-fn">integrations</span>
+    </div>
+    <div class="agent-chip" data-agent="nfr">
+      <span class="agent-chip-name">NFR Analyst</span>
+      <span class="agent-chip-fn">quality constraints</span>
+    </div>
+    <div class="agent-chip" data-agent="test">
+      <span class="agent-chip-name">Testability Analyst</span>
+      <span class="agent-chip-fn">measurable acceptance</span>
+    </div>
+    <div class="agent-chip" data-agent="decision" style="grid-column: span 2;">
+      <span class="agent-chip-name">Decision Analyst</span>
+      <span class="agent-chip-fn">trade-offs & recommendations</span>
+    </div>
+  </div>
+
+  <!-- Chat Messages -->
+  <div class="chat-messages">
+    <div class="chat-msg">
+      <div class="chat-msg-label">You</div>
+      <div class="chat-msg-user">
+        We need users to be able to track their orders in real-time. They should get push notifications and email alerts when status changes. We also need to consider partners who use our API for tracking.
+      </div>
+    </div>
+
+    <div class="chat-msg">
+      <div class="chat-msg-label">Req Coordinator</div>
+      <div class="chat-msg-system">
+        I've analyzed your input and identified <strong>3 potential requirements</strong>.
+
+        <div class="chat-structured">
+          <div class="chat-structured-title">Structured Summary</div>
+          <ul class="chat-structured-list">
+            <li><strong>REQ-104</strong> Real-time order status dashboard</li>
+            <li><strong>REQ-105</strong> Multi-channel notification preferences</li>
+            <li><strong>REQ-106</strong> Partner API tracking integration</li>
+          </ul>
+
+          <div class="chat-structured-title">Assumptions</div>
+          <ul class="chat-structured-list">
+            <li>Real-time means WebSocket or polling under 30 seconds</li>
+            <li>Push notifications delivered via existing mobile app infrastructure</li>
+            <li>Partner API follows existing REST conventions</li>
+          </ul>
+
+          <div class="chat-structured-title">Open Questions</div>
+          <ul class="chat-structured-list">
+            <li>Which order statuses should trigger notifications?</li>
+            <li>Are partner API users authenticated via OAuth?</li>
+            <li>Should notification preferences be per-order or per-user?</li>
+          </ul>
+        </div>
+
+        <div class="chat-triggers">
+          <div class="chat-triggers-label">Triggers detected</div>
+          <div class="chat-triggers-tags">
+            <span class="chat-trigger-tag">API dependency</span>
+            <span class="chat-trigger-tag">notification ambiguity</span>
+            <span class="chat-trigger-tag">vague acceptance criteria</span>
+          </div>
+        </div>
+
+        <div class="chat-agents-activated">
+          <div class="chat-agent-active">
+            <span class="chat-agent-active-dot" style="background:var(--agent-integration)"></span>
+            <span class="chat-agent-active-name">Integration Analyst</span>
+            <span class="chat-agent-active-task">- checking API dependencies</span>
+          </div>
+          <div class="chat-agent-active">
+            <span class="chat-agent-active-dot" style="background:var(--agent-nfr)"></span>
+            <span class="chat-agent-active-name">NFR Analyst</span>
+            <span class="chat-agent-active-task">- real-time performance constraints</span>
+          </div>
+          <div class="chat-agent-active">
+            <span class="chat-agent-active-dot" style="background:var(--agent-test)"></span>
+            <span class="chat-agent-active-name">Testability Analyst</span>
+            <span class="chat-agent-active-task">- acceptance criteria gaps</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Input -->
+  <div class="chat-input-area">
+    <div class="chat-input-wrapper">
+      <input type="text" placeholder="Describe requirements, ask questions...">
+      <button class="chat-send-btn">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10l12-6-4 6 4 6-12-6z"/></svg>
+      </button>
+    </div>
+  </div>
+</aside>
+
+</body>
+</html>

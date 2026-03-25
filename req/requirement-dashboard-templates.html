@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Requirement Dashboard Templates</title>
+<style>
+  :root {
+    --color-bg: #f5f6f8;
+    --color-surface: #ffffff;
+    --color-border: #d1d5db;
+    --color-text: #1f2937;
+    --color-text-secondary: #6b7280;
+    --color-approved: #059669;
+    --color-approved-bg: #d1fae5;
+    --color-risk-high: #dc2626;
+    --color-risk-high-bg: #fee2e2;
+    --color-risk-medium: #d97706;
+    --color-risk-medium-bg: #fef3c7;
+    --color-risk-low: #2563eb;
+    --color-risk-low-bg: #dbeafe;
+    --color-accent: #4f46e5;
+    --color-accent-bg: #eef2ff;
+    --color-section-border: #e5e7eb;
+    --radius: 6px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.5;
+    padding: 2rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-subtitle {
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 2rem;
+  }
+
+  .variant-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.25rem;
+    border-bottom: 2px solid var(--color-accent);
+    display: inline-block;
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    max-width: 800px;
+  }
+
+  /* --- Card base --- */
+  .req-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .req-card-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--color-section-border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .req-card-header .breadcrumb {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+  }
+
+  .req-card-header .breadcrumb span {
+    color: var(--color-text-secondary);
+  }
+
+  .req-card-header .title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .req-card-header .req-id {
+    font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    background: var(--color-accent-bg);
+    padding: 0.125rem 0.5rem;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .req-card-header h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 0.125rem 0.5rem;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .badge-approved {
+    background: var(--color-approved-bg);
+    color: var(--color-approved);
+  }
+
+  .badge-version {
+    background: #f3f4f6;
+    color: #374151;
+  }
+
+  .req-card-body {
+    padding: 1.25rem;
+  }
+
+  .req-card-body > section {
+    margin-bottom: 1.25rem;
+  }
+
+  .req-card-body > section:last-child {
+    margin-bottom: 0;
+  }
+
+  .section-heading {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.25rem;
+    border-bottom: 1px solid var(--color-section-border);
+  }
+
+  .spec-text {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-text);
+  }
+
+  /* --- Lists --- */
+  .item-list {
+    list-style: none;
+    font-size: 0.8125rem;
+  }
+
+  .item-list li {
+    padding: 0.375rem 0;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+
+  .item-list li:last-child {
+    border-bottom: none;
+  }
+
+  .item-list .item-id {
+    font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace;
+    font-size: 0.6875rem;
+    color: var(--color-text-secondary);
+    flex-shrink: 0;
+    min-width: 3.5rem;
+  }
+
+  .item-list .item-text {
+    flex: 1;
+  }
+
+  /* --- Risks --- */
+  .risk-item {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin-bottom: 0.375rem;
+    font-size: 0.8125rem;
+  }
+
+  .risk-item:last-child { margin-bottom: 0; }
+
+  .risk-high { background: var(--color-risk-high-bg); }
+  .risk-medium { background: var(--color-risk-medium-bg); }
+  .risk-low { background: var(--color-risk-low-bg); }
+
+  .risk-severity {
+    font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace;
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+    padding: 0.125rem 0.375rem;
+    border-radius: 3px;
+    line-height: 1.4;
+  }
+
+  .risk-high .risk-severity { color: var(--color-risk-high); }
+  .risk-medium .risk-severity { color: var(--color-risk-medium); }
+  .risk-low .risk-severity { color: var(--color-risk-low); }
+
+  .risk-text { flex: 1; }
+
+  /* --- Agent reviews --- */
+  .review-list {
+    list-style: none;
+    font-size: 0.8125rem;
+  }
+
+  .review-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .review-item:last-child { border-bottom: none; }
+
+  .review-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .review-agent {
+    font-weight: 600;
+    color: var(--color-accent);
+  }
+
+  .review-date {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+  }
+
+  .review-issues {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    padding: 0.0625rem 0.375rem;
+    border-radius: 3px;
+  }
+
+  .review-issues-zero {
+    background: var(--color-approved-bg);
+    color: var(--color-approved);
+  }
+
+  .review-issues-nonzero {
+    background: var(--color-risk-medium-bg);
+    color: var(--color-risk-medium);
+  }
+
+  .review-summary {
+    color: var(--color-text-secondary);
+    font-size: 0.8125rem;
+  }
+
+  /* --- Story candidates --- */
+  .story-summary-toggle {
+    font-size: 0.8125rem;
+    color: var(--color-accent);
+    cursor: pointer;
+    user-select: none;
+    padding: 0.25rem 0;
+  }
+
+  .story-summary-toggle::-webkit-details-marker {
+    color: var(--color-text-secondary);
+  }
+
+  .story-list {
+    list-style: none;
+    margin-top: 0.375rem;
+    font-size: 0.8125rem;
+  }
+
+  .story-item {
+    padding: 0.375rem 0;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .story-item:last-child { border-bottom: none; }
+
+  .story-title {
+    font-weight: 600;
+  }
+
+  .story-draft {
+    color: var(--color-text-secondary);
+    font-size: 0.8125rem;
+    margin-top: 0.125rem;
+  }
+
+  .story-type {
+    font-size: 0.6875rem;
+    color: var(--color-text-secondary);
+    font-style: italic;
+  }
+
+  /* --- Type-specific emphasis --- */
+  .card-functional .section-emphasis {
+    border-left: 3px solid var(--color-accent);
+    padding-left: 0.75rem;
+  }
+
+  .card-nfr .section-emphasis {
+    border-left: 3px solid var(--color-risk-medium);
+    padding-left: 0.75rem;
+  }
+
+  .card-integration .section-emphasis {
+    border-left: 3px solid #0891b2;
+    padding-left: 0.75rem;
+  }
+
+  /* --- NFR thresholds --- */
+  .threshold-table {
+    width: 100%;
+    font-size: 0.8125rem;
+    border-collapse: collapse;
+  }
+
+  .threshold-table th {
+    text-align: left;
+    font-weight: 600;
+    padding: 0.375rem 0.5rem;
+    border-bottom: 1px solid var(--color-section-border);
+    color: var(--color-text-secondary);
+    font-size: 0.75rem;
+  }
+
+  .threshold-table td {
+    padding: 0.375rem 0.5rem;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .threshold-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* --- Integration context --- */
+  .integration-meta {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.25rem 1rem;
+    font-size: 0.8125rem;
+  }
+
+  .integration-meta dt {
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+  }
+
+  .integration-meta dd {
+    color: var(--color-text);
+  }
+
+  /* --- Failure modes --- */
+  .failure-table {
+    width: 100%;
+    font-size: 0.8125rem;
+    border-collapse: collapse;
+  }
+
+  .failure-table th {
+    text-align: left;
+    font-weight: 600;
+    padding: 0.375rem 0.5rem;
+    border-bottom: 1px solid var(--color-section-border);
+    color: var(--color-text-secondary);
+    font-size: 0.75rem;
+  }
+
+  .failure-table td {
+    padding: 0.375rem 0.5rem;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .failure-table tr:last-child td {
+    border-bottom: none;
+  }
+</style>
+</head>
+<body>
+
+<h1>Requirement Dashboard Templates</h1>
+<p class="page-subtitle">Four card variants for displaying approved requirements. Data sourced from CRM Core Platform (proj-001).</p>
+
+<div class="card-grid">
+
+<!-- ============================================================ -->
+<!-- UNIVERSAL CARD - req-008 -->
+<!-- ============================================================ -->
+<div>
+  <div class="variant-label">Universal</div>
+  <article class="req-card">
+    <header class="req-card-header">
+      <div class="breadcrumb">
+        <span>Order Management</span> &rsaquo; <span>Order Tracking</span>
+      </div>
+      <div class="title-row">
+        <span class="req-id">req-008</span>
+        <h2>Send automated status-change notifications to customers</h2>
+        <span class="badge badge-version">v1.0</span>
+        <span class="badge badge-approved">Approved</span>
+      </div>
+    </header>
+    <div class="req-card-body">
+
+      <section>
+        <div class="section-heading">Specification</div>
+        <p class="spec-text">The system SHALL send an automated notification to the customer when their order status changes to "Shipped" or "Delivered". The notification SHALL be delivered via email. The email SHALL include: order reference, new status, estimated delivery date (if available), and a link to the order detail page. Notifications SHALL be sent within 10 minutes of the status change event being received.</p>
+      </section>
+
+      <section>
+        <div class="section-heading">Acceptance Criteria</div>
+        <ul class="item-list">
+          <li>
+            <span class="item-id">ac-017</span>
+            <span class="item-text">Given a "Shipped" status event is received, when 10 minutes have elapsed, then the customer's registered email address has received a notification email containing the order reference and estimated delivery date.</span>
+          </li>
+          <li>
+            <span class="item-id">ac-018</span>
+            <span class="item-text">Given a "Delivered" status event is received, when 10 minutes have elapsed, then the customer receives an email confirming delivery and containing a link to the order detail page.</span>
+          </li>
+          <li>
+            <span class="item-id">ac-019</span>
+            <span class="item-text">Given the email service is unavailable when a status event arrives, when the service recovers, then the notification is sent via a retry queue within 1 hour of the original event.</span>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="section-heading">Assumptions</div>
+        <ul class="item-list">
+          <li>
+            <span class="item-id">asm-008</span>
+            <span class="item-text">The customer's preferred notification language defaults to the language set on their profile. If not set, English is used.</span>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="section-heading">Open Questions</div>
+        <ul class="item-list">
+          <li>
+            <span class="item-id">oq-008</span>
+            <span class="item-text">Should customers be able to opt out of status notifications individually, or is notification mandatory for all confirmed orders?</span>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="section-heading">Risks</div>
+        <div class="risk-item risk-high">
+          <span class="risk-severity">HIGH</span>
+          <span class="item-id">risk-008</span>
+          <span class="risk-text">Sending emails without an opt-out mechanism may breach email marketing regulations in some jurisdictions (e.g. CAN-SPAM, CASL). Mitigation: add an unsubscribe link and honour opt-outs before v1.0 release.</span>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-heading">Agent Reviews</div>
+        <ul class="review-list">
+          <li class="review-item">
+            <div class="review-header">
+              <span class="review-agent">requirements-analyst</span>
+              <span class="review-date">2026-02-05</span>
+              <span class="review-issues review-issues-zero">0 issues</span>
+            </div>
+            <div class="review-summary">Notification trigger events, content requirements, and delivery SLA are all specified. Opt-out question is unresolved.</div>
+          </li>
+          <li class="review-item">
+            <div class="review-header">
+              <span class="review-agent">nfr-analyst</span>
+              <span class="review-date">2026-02-07</span>
+              <span class="review-issues review-issues-nonzero">2 issues</span>
+            </div>
+            <div class="review-summary">Email marketing compliance (CAN-SPAM, CASL, GDPR Article 6) requires an opt-out path even for transactional notifications in some regions. Confirm legal classification with DPO.</div>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="section-heading">Story Candidates</div>
+        <details>
+          <summary class="story-summary-toggle">2 story candidates</summary>
+          <ul class="story-list">
+            <li class="story-item">
+              <div class="story-title">Send shipping notification email <span class="story-type">user-story</span></div>
+              <div class="story-draft">As a customer, I want to receive an email when my order ships so that I know to expect the delivery.</div>
+            </li>
+            <li class="story-item">
+              <div class="story-title">Send delivery confirmation email <span class="story-type">user-story</span></div>
+              <div class="story-draft">As a customer, I want to receive an email confirming delivery so that I can verify I have received everything I ordered.</div>
+            </li>
+          </ul>
+        </details>
+      </section>
+
+    </div>
+  </article>
+</div>
+
+<!-- ============================================================ -->
+<!-- FUNCTIONAL CARD - req-002 -->
+<!-- ============================================================ -->
+<div>
+  <div class="variant-label">Functional</div>
+  <article class="req-card card-functional">
+    <header class="req-card-header">
+      <div class="breadcrumb">
+        <span>Customer Management</span> &rsaquo; <span>Customer Onboarding</span>
+      </div>
+      <div class="title-row">
+        <span class="req-id">req-002</span>
+        <h2>Detect and reject duplicate email addresses at registration</h2>
+        <span class="badge badge-version">v1.0</span>
+        <span class="badge badge-approved">Approved</span>
+      </div>
+    </header>
+    <div class="req-card-body">
+
+      <section>
+        <div class="section-heading">Specification</div>
+        <p class="spec-text">The system SHALL reject a registration attempt if the submitted email address already exists on any active or suspended customer record. The user SHALL be shown a message directing them to the login or account-recovery flow. The check SHALL be case-insensitive.</p>
+      </section>
+
+      <section class="section-emphasis">
+        <div class="section-heading">Acceptance Criteria</div>
+        <ul class="item-list">
+          <li>
+            <span class="item-id">ac-003</span>
+            <span class="item-text">Given an email that already exists on an active record, when a new registration is submitted, then the system rejects the attempt with status 409 and returns a human-readable message.</span>
+          </li>
+          <li>
+            <span class="item-id">ac-004</span>
+            <span class="item-text">Given an email that differs only in casing (e.g. User@example.com vs user@example.com), when a registration is submitted, then the system treats it as a duplicate and rejects the attempt.</span>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="section-heading">Assumptions</div>
+        <ul class="item-list">
+          <li>
+            <span class="item-id">asm-002</span>
+            <span class="item-text">Deleted/archived customer records are excluded from the duplicate check unless the business rules are revised.</span>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="section-heading">Open Questions</div>
+        <ul class="item-list">
+          <li>
+            <span class="item-id">oq-002</span>
+            <span class="item-text">Should the system reveal whether the email belongs to a suspended account, or give a generic "email already in use" message for security reasons?</span>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="section-heading">Risks</div>
+        <div class="risk-item risk-high">
+          <span class="risk-severity">HIGH</span>
+          <span class="item-id">risk-002</span>
+          <span class="risk-text">Revealing account existence through the error message could aid account enumeration attacks. Mitigation: use a generic message and add oq-002 to the security review.</span>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-heading">Agent Reviews</div>
+        <ul class="review-list">
+          <li class="review-item">
+            <div class="review-header">
+              <span class="review-agent">requirements-analyst</span>
+              <span class="review-date">2025-11-12</span>
+              <span class="review-issues review-issues-zero">0 issues</span>
+            </div>
+            <div class="review-summary">Requirement is clear and testable. Case-insensitive rule is explicit. Security risk noted around message disclosure.</div>
+          </li>
+          <li class="review-item">
+            <div class="review-header">
+              <span class="review-agent">nfr-analyst</span>
+              <span class="review-date">2025-11-14</span>
+              <span class="review-issues review-issues-nonzero">2 issues</span>
+            </div>
+            <div class="review-summary">Account enumeration via error message is a low-effort attack vector. Recommend aligning error messaging with OWASP Authentication Cheat Sheet guidance before approval.</div>
+          </li>
+          <li class="review-item">
+            <div class="review-header">
+              <span class="review-agent">testability-analyst</span>
+              <span class="review-date">2025-11-15</span>
+              <span class="review-issues review-issues-zero">0 issues</span>
+            </div>
+            <div class="review-summary">Acceptance criteria are measurable. HTTP status code 409 is explicit. Case-insensitivity rule has a concrete test case.</div>
+          </li>
+        </ul>
+      </section>
+
+      <section class="section-emphasis">
+        <div class="section-heading">Story Candidates</div>
+        <details>
+          <summary class="story-summary-toggle">2 story candidates</summary>
+          <ul class="story-list">
+            <li class="story-item">
+              <div class="story-title">Prevent duplicate registrations by email <span class="story-type">user-story</span></div>
+              <div class="story-draft">As a system operator, I want duplicate email addresses to be blocked at registration so that each email maps to exactly one customer record.</div>
+            </li>
+            <li class="story-item">
+              <div class="story-title">Show account-recovery prompt on duplicate email <span class="story-type">user-story</span></div>
+              <div class="story-draft">As a returning user who forgets they already have an account, I want to see a link to the login and password-reset flow so that I can recover access instead of creating a duplicate.</div>
+            </li>
+          </ul>
+        </details>
+      </section>
+
+    </div>
+  </article>
+</div>
+
+<!-- ============================================================ -->
+<!-- NFR CARD - req-004 -->
+<!-- ============================================================ -->
+<div>
+  <div class="variant-label">NFR</div>
+  <article class="req-card card-nfr">
+    <header class="req-card-header">
+      <div class="breadcrumb">
+        <span>Customer Management</span> &rsaquo; <span>Customer Profile Management</span>
+      </div>
+      <div class="title-row">
+        <span class="req-id">req-004</span>
+        <h2>Audit log for all customer profile changes</h2>
+        <span class="badge badge-version">v1.0</span>
+        <span class="badge badge-approved">Approved</span>
+      </div>
+    </header>
+    <div class="req-card-body">
+
+      <section>
+        <div class="section-heading">Specification</div>
+        <p class="spec-text">The system SHALL maintain an immutable audit log for every change made to a customer profile record. Each log entry SHALL include: the field changed, the previous value, the new value, the actor (customer or staff), the actor's user ID, and the UTC timestamp. The log SHALL be retained for a minimum of 3 years.</p>
+      </section>
+
+      <section class="section-emphasis">
+        <div class="section-heading">Measurable Thresholds</div>
+        <table class="threshold-table">
+          <thead>
+            <tr><th>Metric</th><th>Threshold</th><th>Source</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Log entry creation latency</td><td>&lt; 1 second after profile save</td><td>ac-007</td></tr>
+            <tr><td>Retention period</td><td>&ge; 3 years</td><td>body</td></tr>
+            <tr><td>Immutability</td><td>0 successful DELETE/UPDATE operations</td><td>ac-008</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="section-emphasis">
+        <div class="section-heading">Compliance Context</div>
+        <ul class="item-list">
+          <li><span class="item-text">Retention: 3 years minimum, write-only from application layer</span></li>
+          <li><span class="item-text">GDPR tension: right-to-erasure vs. immutable log (risk-004)</span></li>
+          <li><span class="item-text">Lawful basis: pending DPO confirmation</span></li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="section-heading">Acceptance Criteria</div>
+        <ul class="item-list">
+          <li>
+            <span class="item-id">ac-007</span>
+            <span class="item-text">Given a customer updates their phone number, when the change is saved, then an audit log entry is created within 1 second containing the old value, new value, customer user ID, and UTC timestamp.</span>
+          </li>
+          <li>
+            <span class="item-id">ac-008</span>
+            <span class="item-text">Given an audit log entry is created, when a DELETE or UPDATE is attempted on that entry via any application path, then the operation is rejected.</span>
+          </li>
+          <li>
+            <span class="item-id">ac-009</span>
+            <span class="item-text">Given a log entry is 3 years old, when a retention query runs, then the entry is not purged and remains queryable.</span>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="section-heading">Assumptions</div>
+        <ul class="item-list">
+          <li>
+            <span class="item-id">asm-004</span>
+            <span class="item-text">The audit log is write-only from the application layer. No update or delete operations are permitted on log entries.</span>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="section-heading">Open Questions</div>
+        <ul class="item-list">
+          <li>
+            <span class="item-id">oq-004</span>
+            <span class="item-text">Is the audit log exposed to customers (self-service view of "your recent changes") or only accessible to internal support staff?</span>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="section-heading">Risks</div>
+        <div class="risk-item risk-high">
+          <span class="risk-severity">HIGH</span>
+          <span class="item-id">risk-004</span>
+          <span class="risk-text">Storing previous field values may include sensitive personal data (e.g. old phone numbers). GDPR right-to-erasure requests may conflict with the immutability requirement. Mitigation: consult DPO before finalising retention policy.</span>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-heading">Agent Reviews</div>
+        <ul class="review-list">
+          <li class="review-item">
+            <div class="review-header">
+              <span class="review-agent">requirements-analyst</span>
+              <span class="review-date">2025-12-03</span>
+              <span class="review-issues review-issues-zero">0 issues</span>
+            </div>
+            <div class="review-summary">Requirement is complete. Immutability constraint is explicit. Retention period is defined.</div>
+          </li>
+          <li class="review-item">
+            <div class="review-header">
+              <span class="review-agent">nfr-analyst</span>
+              <span class="review-date">2025-12-05</span>
+              <span class="review-issues review-issues-nonzero">2 issues</span>
+            </div>
+            <div class="review-summary">GDPR tension between immutable audit log and right-to-erasure is a real compliance risk. DPO sign-off required before v1.0 approval.</div>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="section-heading">Story Candidates</div>
+        <details>
+          <summary class="story-summary-toggle">1 story candidate</summary>
+          <ul class="story-list">
+            <li class="story-item">
+              <div class="story-title">Write audit log entry on profile change <span class="story-type">user-story</span></div>
+              <div class="story-draft">As a support agent, I want to see a full history of changes to a customer profile so that I can investigate disputes and support requests accurately.</div>
+            </li>
+          </ul>
+        </details>
+      </section>
+
+    </div>
+  </article>
+</div>
+
+<!-- ============================================================ -->
+<!-- INTEGRATION CARD - req-006 -->
+<!-- ============================================================ -->
+<div>
+  <div class="variant-label">Integration</div>
+  <article class="req-card card-integration">
+    <header class="req-card-header">
+      <div class="breadcrumb">
+        <span>Order Management</span> &rsaquo; <span>Order Creation</span>
+      </div>
+      <div class="title-row">
+        <span class="req-id">req-006</span>
+        <h2>System validates stock availability before order confirmation</h2>
+        <span class="badge badge-version">v1.0</span>
+        <span class="badge badge-approved">Approved</span>
+      </div>
+    </header>
+    <div class="req-card-body">
+
+      <section>
+        <div class="section-heading">Specification</div>
+        <p class="spec-text">Before confirming an order, the system SHALL check stock availability for each line item against the inventory service. If any line item is out of stock, the order SHALL NOT be confirmed and the customer SHALL be shown which items are unavailable. The stock check SHALL be performed in real-time at confirmation, not at the time the item is added to the draft.</p>
+      </section>
+
+      <section class="section-emphasis">
+        <div class="section-heading">Integration Context</div>
+        <dl class="integration-meta">
+          <dt>Upstream</dt>
+          <dd>CRM order service (caller)</dd>
+          <dt>Downstream</dt>
+          <dd>Inventory service (REST API)</dd>
+          <dt>Pattern</dt>
+          <dd>Synchronous REST call</dd>
+          <dt>SLA</dt>
+          <dd>2-second response time under normal load</dd>
+          <dt>Trigger</dt>
+          <dd>Order confirmation event</dd>
+          <dt>Data flow</dt>
+          <dd>Line item SKUs + quantities (request) / availability per SKU (response)</dd>
+        </dl>
+      </section>
+
+      <section class="section-emphasis">
+        <div class="section-heading">Failure Modes</div>
+        <table class="failure-table">
+          <thead>
+            <tr><th>Scenario</th><th>Expected Behavior</th><th>Reference</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Service unavailable</td><td>Block confirmation, show retry message</td><td>ac-014</td></tr>
+            <tr><td>Timeout (&gt; 2 seconds)</td><td>Treat as unavailable</td><td>asm-006</td></tr>
+            <tr><td>Race condition on last unit</td><td>Optimistic locking or reservation token</td><td>risk-006</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <div class="section-heading">Acceptance Criteria</div>
+        <ul class="item-list">
+          <li>
+            <span class="item-id">ac-012</span>
+            <span class="item-text">Given a customer confirms an order where all line items are in stock, when the confirmation is submitted, then the order status changes to "confirmed" and an order reference is returned.</span>
+          </li>
+          <li>
+            <span class="item-id">ac-013</span>
+            <span class="item-text">Given a customer confirms an order where at least one line item is out of stock, when the confirmation is submitted, then the order is not confirmed and the response lists the out-of-stock items by name and SKU.</span>
+          </li>
+          <li>
+            <span class="item-id">ac-014</span>
+            <span class="item-text">Given the inventory service is unavailable, when the confirmation is submitted, then the order is not confirmed and the customer is shown a service-unavailable message with an instruction to retry.</span>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="section-heading">Assumptions</div>
+        <ul class="item-list">
+          <li>
+            <span class="item-id">asm-006</span>
+            <span class="item-text">The inventory service provides a synchronous REST endpoint for stock queries and responds within 2 seconds under normal load.</span>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="section-heading">Open Questions</div>
+        <ul class="item-list">
+          <li>
+            <span class="item-id">oq-006</span>
+            <span class="item-text">Should the system allow partial order confirmation (confirm available items, hold unavailable items) or require all items to be available before confirming?</span>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="section-heading">Risks</div>
+        <div class="risk-item risk-high">
+          <span class="risk-severity">HIGH</span>
+          <span class="item-id">risk-006</span>
+          <span class="risk-text">A race condition may allow two customers to confirm orders for the last unit of stock simultaneously. Mitigation: inventory service must use optimistic locking or reservation tokens.</span>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-heading">Agent Reviews</div>
+        <ul class="review-list">
+          <li class="review-item">
+            <div class="review-header">
+              <span class="review-agent">requirements-analyst</span>
+              <span class="review-date">2026-01-12</span>
+              <span class="review-issues review-issues-zero">0 issues</span>
+            </div>
+            <div class="review-summary">Requirement covers the happy path, out-of-stock path, and service-unavailable path. Race condition risk is noted.</div>
+          </li>
+          <li class="review-item">
+            <div class="review-header">
+              <span class="review-agent">integration-analyst</span>
+              <span class="review-date">2026-01-14</span>
+              <span class="review-issues review-issues-nonzero">2 issues</span>
+            </div>
+            <div class="review-summary">Inventory service dependency is identified. Synchronous call with 2s SLA is reasonable but fragile under load spikes. Circuit breaker pattern recommended.</div>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="section-heading">Story Candidates</div>
+        <details>
+          <summary class="story-summary-toggle">2 story candidates</summary>
+          <ul class="story-list">
+            <li class="story-item">
+              <div class="story-title">Block order confirmation when items are out of stock <span class="story-type">user-story</span></div>
+              <div class="story-draft">As a customer service agent, I want the system to check live stock before confirming an order so that customers are not promised goods we cannot fulfil.</div>
+            </li>
+            <li class="story-item">
+              <div class="story-title">Handle inventory service unavailability gracefully <span class="story-type">user-story</span></div>
+              <div class="story-draft">As a customer, I want to see a clear retry message when the stock check fails so that I know the issue is temporary and not my fault.</div>
+            </li>
+          </ul>
+        </details>
+      </section>
+
+    </div>
+  </article>
+</div>
+
+</div><!-- end card-grid -->
+
+</body>
+</html>
